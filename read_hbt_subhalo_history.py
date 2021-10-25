@@ -17,8 +17,8 @@ class HaloInfo:
     def assign_data(self, subhalo_data, snapshotnumber, a):
         """ Assign initial data from reference snapshot number. """
         self.data           = subhalo_data
-        self.snapshotnumber = np.ones(len(subhalo_data), dtype='i4') * snapshotnumber
-        self.a              = np.ones(len(subhalo_data), dtype='f4') * a
+        self.snapshotnumber = snapshotnumber
+        self.a              = a
         self.num_snaps      = 1
 
     def get_birth_snap(self):
@@ -28,7 +28,7 @@ class HaloInfo:
     def add_data(self, new_data):
         """ Add data from another snapshot. """
         if self.num_snaps == 0:
-            self.assign_data(new_data.data, new_data.snapshotnumber[0], new_data.a[0])
+            self.assign_data(new_data.data, new_data.snapshotnumber, new_data.a)
         else:
             self.data = np.hstack((self.data, new_data.data))
             self.snapshotnumber = np.concatenate((self.snapshotnumber, new_data.snapshotnumber))
@@ -127,7 +127,7 @@ class subhalo_history:
                 for tmp_data in all_data:
                     if tmp_data.comm_rank != 0 and tmp_data.num_snaps > 0:
                         final_data.add_data(tmp_data)
-            
+           
             results = {}
             for this_id in np.unique(final_data.data['TrackId']):
                 results[this_id] = {}
@@ -156,6 +156,7 @@ class subhalo_history:
 
         # Class to store halo info.
         thisHaloInfo = HaloInfo(self.comm_rank)
+        num_total_found = 0
 
         # Loop over each file part.
         for i in range(num_file):
@@ -190,14 +191,22 @@ class subhalo_history:
                 idx = np.where(np.in1d(id_list, trackid_list))[0]
             
             if len(idx) > 0:
-                print(f"Rank {self.comm_rank} found {id_list[idx]} in file {this_file}")
+                print(f"Rank {self.comm_rank} found {id_list[idx]} in file {this_file}",
+                      f"(sn:{snapshotnumber})")
                 thisHaloInfo.found += len(idx)
 
                 # Extract.
-                thisHaloInfo.assign_data(f['Subhalos'][idx], snapshotnumber,
-                    self.HEADER['Cosmology/ScaleFactor'])
+                thisHaloInfo.assign_data(f['Subhalos'][idx], np.tile(snapshotnumber, len(idx)),
+                    np.tile(self.HEADER['Cosmology/ScaleFactor'], len(idx)))
 
             f.close()
+
+            # Do we need to keep going?
+            if self.comm_size > 1:
+                num_total_found = self.comm.allreduce(thisHaloInfo.found)
+            else:
+                num_total_found = thisHaloInfo.found
+            if num_total_found == len(trackid_list): break
 
         return thisHaloInfo
 
