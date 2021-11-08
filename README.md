@@ -136,3 +136,28 @@ haloes.link_sibelius(compute_distance=True)
 # Reduce all galaxies to rank 0.
 hbt.gather_haloes()
 ```
+
+# read_hbt_subhalo_history.py
+
+Simple python3 script to track subhaloes through time from the HBT+ output for SIBELIUS simulations.
+
+Accepts a list of trackids and returns their HBT properties at each snapshot.
+
+### Example usage (MPI case)
+
+```python
+from mpi4py import MPI
+from read_hbt_subhalo_history import subhalo_history
+
+# MPI communicator.
+comm = MPI.COMM_WORLD
+
+# Set up read_galform object.
+hbt_dir = "/path/to/parent/hbt/folder/"
+hbt = subhalo_history(hbt_dir, comm=comm)
+
+# Load subhalo histories.
+snapnum = 199 # z=0 for SIBELIUS simulations (where to first find the trackids).
+trackids = [1,2,3]
+data = hbt.hbt.load_galaxy_history(trackids, snapnum)
+```
