@@ -228,26 +228,3 @@ class HBT_data:
                     compute_velocity, compute_galactic, compute_apparent_mag,
                     compute_extra_coordinates, compute_extra_objects)
 
-if __name__ == '__main__':
-    from mpi4py import MPI
-
-    # MPI stuff.
-    comm = MPI.COMM_WORLD
-
-    #hbt_dir='/cosma6/data/dp004/rttw52/SibeliusOutput/Sibelius_200Mpc_256/hbt/'
-    hbt_dir='/cosma6/data/dp004/rttw52/SibeliusOutput/Sibelius_200Mpc_1/hbt_refactored/'
-
-    hbt = HBT_data(hbt_dir, comm=comm)
-    #data = hbt.load_subhalo_particles(199, [236671])
-    wtl = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nbound']
-    hbt.load_haloes(199, what_to_load=wtl)
-    hbt.link_sibelius(compute_distance=True)
-    print(hbt.num_haloes)
-    hbt.gather_haloes()
-    print(comm.rank, hbt.data)
-    #print(hbt.HEADER)
-    #print(hbt.data)
-    #print(hbt.what_to_load)
-    #print(hbt.sib_info.mw.coords)
-    #print(hbt.compute_angsep(0.5, 0.5))
-    #print(comm.rank, hbt.data['TrackId'])

@@ -113,33 +113,3 @@ class read_galform:
         for att in self.data.keys():
             self.data[att] = self.data[att][mask]
 
-if __name__ == '__main__':
-    from mpi4py import MPI
-
-    # MPI stuff.
-    comm = MPI.COMM_WORLD
-
-    d = "/cosma7/data/dp004/jch/SibeliusOutput/Sibelius_200Mpc_1/Galform/models/Lacey16/output/"
-    x = read_galform(d, 10, comm=comm)
-
-    #x.load_galaxies(["M_SMBH", "mstars_bulge", "SubhaloID", "xgal", "ygal", "zgal",
-    #    "vxgal", "vygal", "vzgal", "mag_SDSS-g_o_bulge", "SubhaloSnapNum"])
-    #x.link_sibelius(compute_distance=True, compute_ra_dec=True, compute_galactic=True,
-    #        compute_apparent_mag=True, compute_velocity=True)
-
-    #print(np.sort(x.data['TrackId']))
-
-    x.load_galaxies(["type"])
-    mask = np.where(x.data['type'] == 2)
-    print(len(mask[0]))
-    #print(x.data['xgal'] - 499.343)
-    #print(x.data['ygal'] - 504.507)
-    #print(x.data['zgal'] - 497.311)
-    #ra = x.data['ra_rad'] + np.pi
-    #dec = x.data['dec_rad'] + np.pi/2.
-    #r = x.data['d_mw']
-
-    #x = r*np.cos(ra)*np.sin(dec)
-    #y = r*np.sin(ra)*np.sin(dec)
-    #z = r*np.cos(dec)
-    #print(x,y,z)

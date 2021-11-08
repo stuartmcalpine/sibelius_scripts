@@ -202,26 +202,11 @@ class subhalo_history:
             f.close()
 
             # Do we need to keep going?
-            if self.comm_size > 1:
-                num_total_found = self.comm.allreduce(thisHaloInfo.found)
-            else:
-                num_total_found = thisHaloInfo.found
-            if num_total_found == len(trackid_list): break
+            #if self.comm_size > 1:
+            #    num_total_found = self.comm.allreduce(thisHaloInfo.found)
+            #else:
+            #    num_total_found = thisHaloInfo.found
+            #if num_total_found == len(trackid_list): break
 
         return thisHaloInfo
 
-if __name__ == '__main__':
-    from mpi4py import MPI
-
-    # MPI stuff.
-    comm = MPI.COMM_WORLD
-
-    #hbt_dir = '/cosma6/data/dp004/rttw52/swift_runs/runs/Sibelius/200Mpc/Sibelius_200Mpc_256/hbt/'
-    hbt_dir = '/cosma6/data/dp004/rttw52/SibeliusOutput/Sibelius_200Mpc_1/hbt_refactored/'
-
-    hbt = HBT_data(hbt_dir, comm=comm)
-    
-    x = hbt.load_galaxy_history([10566441,10566442], 199, sorted_by_trackid=True,
-            up_to_max_snap=45)
-    print(x)
-    #hbt.load_galaxy_history([10566,10567], 199,  up_to_max_snap=75)
