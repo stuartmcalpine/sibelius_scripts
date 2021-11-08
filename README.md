@@ -73,3 +73,66 @@ galaxies.link_sibelius(compute_distance=True)
 # Reduce all galaxies to rank 0.
 galform.gather_galaxies()
 ```
+
+# read_hbt_subhaloes.py
+
+Simple python3 script to read HBT+ output for SIBELIUS simulations.
+
+`hbt_dir` is the parent directory, which contains subdirectories for each snapshot, in a format `XXX`, each of which contain the `SubSnap_XXX.xx.hdf5` files.
+
+In the MPI reading case, each rank reads its own subset of the `SubSnap_XXX.xx.hdf5` files.
+
+After loading the subhalo propeties, there is an additional option to compute SIBELIUS specific properties, such as RA, DEC, distance to the MW etc. 
+These are all based upon the MW (and other objects) positions from the SIBELIUS-DARK production run. This will add additional information to the original data
+dict (hbt.data in the examples below), see `sibelius_functions.py` for the output names within the dict (see table above for input options for this function).
+
+### Input params to read_hbt_subhaloes.py
+
+| Input | Description | Is optional? | Default option |
+| ----- | ----------- | --------- | ------- | 
+| hbt_dir | path to parent HBT+ data (containing `XXX` format snapshot directories) | No | - |
+| comm= | MPI4PY communicator | Yes | None |
+| verbose= | True for more stdout output | Yes | False |
+
+### Example usage (No MPI case)
+
+```python
+from read_hbt_subhaloes import HBT_data
+
+# Set up HBT object.
+hbt_dir = "/path/to/parent/hbt/folder/"
+hbt = HBT_dta(hbt_dir)
+
+# Load subhalo data.
+snapnum = 199 # z=0 for SIBELIUS simulations.
+what_to_load = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nbound']
+haloes = hbt.load_haloes(snapnum, what_to_load=what_to_load)
+
+# Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
+haloes.link_sibelius(compute_distance=True)
+```
+
+### Example usage (MPI case)
+
+```python
+from mpi4py import MPI
+from read_hbt_subhaloes import HBT_data
+
+# MPI communicator.
+comm = MPI.COMM_WORLD
+
+# Set up read_galform object.
+hbt_dir = "/path/to/parent/hbt/folder/"
+hbt = HBT_dta(hbt_dir, comm=comm)
+
+# Load subhalo data.
+snapnum = 199 # z=0 for SIBELIUS simulations.
+what_to_load = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nbound']
+haloes = hbt.load_haloes(snapnum, what_to_load=what_to_load)
+
+# Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
+haloes.link_sibelius(compute_distance=True)
+
+# Reduce all galaxies to rank 0.
+hbt.gather_haloes()
+```
