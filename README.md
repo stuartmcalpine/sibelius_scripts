@@ -7,7 +7,7 @@ Output data in the GALFORM directory is expected to be multiple `ivol_XXX` folde
 In the MPI reading case, each rank reads its own subset of the `ivol_XXX` files.
 
 After loading the galaxy propeties, there is an additional option to compute SIBELIUS specific properties, such as RA, DEC, distance to the MW etc. 
-These are all based upon the MW (and other objects) positions from the SIBELIUS-DARK production run. This will add additional information to the original data
+These are all based upon the MW (and other objects) positions from the SIBELIUS-DARK production run (though using `use_centre=True` sets the position of the observer to the centre of the box). This will add additional information to the original data
 dict (galform.data in the examples below), see `sibelius_functions.py` for the output names within the dict.
 
 ### Input params to read_galform.py
@@ -19,7 +19,7 @@ dict (galform.data in the examples below), see `sibelius_functions.py` for the o
 | comm= | MPI4PY communicator | Yes | None |
 | verbose= | True for more stdout output | Yes | False |
 
-### Input params to the link_sibelius function (all params are optional and expect True or False)
+### Input params to the link_sibelius function (all params are optional and expect True or False, and all default to False)
 
 | Input | Description |
 | ----- | ----------- | 
@@ -30,6 +30,7 @@ dict (galform.data in the examples below), see `sibelius_functions.py` for the o
 | compute_apparent_mag= | Compute apparent magnitudes of each galaxy based on absolute mag and distance |
 | compute_extra_coordinates= | Simulation x and z axis are flipped. This returns `coords_eq` which is in true equitorial coordinates |
 | compute_extra_objects= | Repeats all the computations above, but now also for M31, Coma and Virgo |
+| use_centre= | True to use centre of the box xyz=[500,500,500] Mpc  v=[0,0,0] kms/ as the "observer" rather than the position of the SIBELIUS-DARK MW subhalo. Note the properties will still be named `X_mw` in the data dict. |
 
 ### Example usage (No MPI case)
 
