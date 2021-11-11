@@ -5,12 +5,15 @@ class SibeliusInfo:
     """ Coordinates of MW, M31, virgo and coma in the Sibelius_200Mpc_1 run.
         Positions are ComovingMostBoundPosition, vels are PhysicalAverageVelocity """
 
-    def __init__(self):
+    def __init__(self, use_centre):
 
         self.loaded_objects = []
 
-        self.add_object('mw', np.array([499.34264252, 504.50740204, 497.31107545]),
-                np.array([-12.43349451, 350.16214811, -152.84008118]), 17791952)
+        if use_centre:
+            self.add_object('mw', np.array([500,500,500]), np.array([0,0,0]), 0)
+        else:
+            self.add_object('mw', np.array([499.34264252, 504.50740204, 497.31107545]),
+                    np.array([-12.43349451, 350.16214811, -152.84008118]), 17791952)
         self.add_object('m31', np.array([499.97779324, 504.68340428, 497.67532689]),
                 np.array([-171.075620, 311.68471382, -205.25150656]), 5098129)
         self.add_object('coma', np.array([553.6426445, 477.52715798, 407.73658318]),
@@ -137,29 +140,6 @@ def sib_comp_galactic(ra, dec):
 
     return l, b
 
-#def sib_comp_supergalactic(ra, dec):
-#    """ Convert ra dec (equitorial) to supergalactic latitude and longitude (b, l) """
-#
-#    # J2000
-#    dec0 = np.radians(27.1284)
-#    ra0 = np.radians(192.8595)
-#    l0 = np.radians(122.9320)
-#
-#    A = np.sin(dec)*np.sin(dec0)
-#    B = np.cos(dec)*np.cos(dec0)*np.cos(ra-ra0)
-#
-#    b = np.arcsin(A + B) # -pi/2 - > pi/2
-#
-#    A = np.cos(dec)*np.sin(ra - ra0)
-#    B = np.sin(dec)*np.cos(dec0) - np.cos(dec)*np.sin(dec0)*np.cos(ra-ra0)
-#
-#    l = l0 - np.arctan2(A,B)
-#    
-#    l[l < 0] += 2*np.pi
-#    l[l > 2*np.pi] -= 2*np.pi # 0 -> 2pi
-#
-#    return l, b
-
 def sib_compute_apparent_mag(M, d):
     """ Compute apparent magnitude from absolute magnitude and distance. """
 
@@ -170,11 +150,11 @@ def sib_compute_apparent_mag(M, d):
 
 def compute_sibelius_properties(data, from_what, compute_distance, compute_ra_dec,
         compute_velocity, compute_galactic, compute_apparent_mag,
-        compute_extra_coordinates, compute_extra_objects, h=0.6777):
+        compute_extra_coordinates, compute_extra_objects, use_centre, h=0.6777):
     """ Main function to append data array with Sibelius info. """
 
     # Contains positions of known objects from the Sibelius_200Mpc_1 run.
-    sib = SibeliusInfo()
+    sib = SibeliusInfo(use_centre)
 
     if from_what.lower() == 'galform':
         c = np.c_[data['xgal'], data['ygal'], data['zgal']]
@@ -184,6 +164,10 @@ def compute_sibelius_properties(data, from_what, compute_distance, compute_ra_de
         c = data['ComovingMostBoundPosition']
         if 'PhysicalAverageVelocity' in data.keys():
             v = data['PhysicalAverageVelocity']
+    elif from_what.lower() == 'velociraptor':
+        c = np.c_[data['Xc'], data['Yc'], data['Zc']]
+        if 'VXc' in data.keys():
+            v = np.c_[data['VXc'], data['VYc'], data['VZc']]
     else:
         raise ValueError("Bad from_what")   
  

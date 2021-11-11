@@ -98,14 +98,14 @@ class read_galform:
 
     def link_sibelius(self, compute_distance=False, compute_ra_dec=False,
             compute_velocity=False, compute_galactic=False, compute_apparent_mag=False,
-            compute_extra_coordinates=False, compute_extra_objects=False):
+            compute_extra_coordinates=False, compute_extra_objects=False, use_centre=False):
         """ Compute some properties of the subhaloes specific to Sibelius. """
 
         from sibelius_functions import compute_sibelius_properties
 
         compute_sibelius_properties(self.data, 'galform', compute_distance, compute_ra_dec,
                 compute_velocity, compute_galactic, compute_apparent_mag,
-                compute_extra_coordinates, compute_extra_objects)
+                compute_extra_coordinates, compute_extra_objects, use_centre)
 
     def mask_arrays(self, mask):
         """ Mask all fields by a given mask. """
