@@ -101,7 +101,7 @@ class read_galform:
             compute_extra_coordinates=False, compute_extra_objects=False, use_centre=False):
         """ Compute some properties of the subhaloes specific to Sibelius. """
 
-        from sibelius_functions import compute_sibelius_properties
+        from sibelius.sibelius_functions import compute_sibelius_properties
 
         compute_sibelius_properties(self.data, 'galform', compute_distance, compute_ra_dec,
                 compute_velocity, compute_galactic, compute_apparent_mag,

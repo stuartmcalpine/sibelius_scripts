@@ -221,7 +221,7 @@ class HBT_data:
             compute_extra_coordinates=False, compute_extra_objects=False, use_centre=False):
         """ Compute some properties of the subhaloes specific to Sibelius. """
 
-        from sibelius_functions import compute_sibelius_properties
+        from sibelus.sibelius_functions import compute_sibelius_properties
 
         if self.num_haloes > 0:
             compute_sibelius_properties(self.data, 'hbt', compute_distance, compute_ra_dec,
