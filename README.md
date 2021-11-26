@@ -1,4 +1,10 @@
-# read_galform.py
+# SIBELIUS simulation read scripts
+
+Python3 scripts to read data from SIBELIUS simulations.
+
+Install `python3 setup.py install` or `python3 setup.py install --user`
+
+# read_galform
 
 Simple python3 script to read GALFORM output for SIBELIUS simulations.
 
@@ -10,7 +16,7 @@ After loading the galaxy propeties, there is an additional option to compute SIB
 These are all based upon the MW (and other objects) positions from the SIBELIUS-DARK production run (though using `use_centre=True` sets the position of the observer to the centre of the box). This will add additional information to the original data
 dict (galform.data in the examples below), see `sibelius_functions.py` for the output names within the dict.
 
-### Input params to read_galform.py
+### Input params to read_galform
 
 | Input | Description | Is optional? | Default option |
 | ----- | ----------- | --------- | ------- | 
@@ -35,7 +41,7 @@ dict (galform.data in the examples below), see `sibelius_functions.py` for the o
 ### Example usage (No MPI case)
 
 ```python
-from read_galform import read_galform
+import sibelius.read_galform as read_galform
 
 # Set up read_galform object.
 data_dir = "/path/to/galform/folder/"
@@ -54,7 +60,7 @@ galaxies.link_sibelius(compute_distance=True)
 
 ```python
 from mpi4py import MPI
-from read_galform import read_galform
+import sibelius.read_galform as read_galform
 
 # MPI communicator.
 comm = MPI.COMM_WORLD
@@ -75,7 +81,7 @@ galaxies.link_sibelius(compute_distance=True)
 galform.gather_galaxies()
 ```
 
-# read_hbt_subhaloes.py
+# read_hbt_subhaloes
 
 Simple python3 script to read HBT+ output for SIBELIUS simulations.
 
@@ -98,7 +104,7 @@ dict (hbt.data in the examples below), see `sibelius_functions.py` for the outpu
 ### Example usage (No MPI case)
 
 ```python
-from read_hbt_subhaloes import HBT_data
+import sibelius.read_hbt_subhaloes as HBT_data
 
 # Set up HBT object.
 hbt_dir = "/path/to/parent/hbt/folder/"
@@ -117,7 +123,7 @@ haloes.link_sibelius(compute_distance=True)
 
 ```python
 from mpi4py import MPI
-from read_hbt_subhaloes import HBT_data
+import sibelius.read_hbt_subhaloes as HBT_data
 
 # MPI communicator.
 comm = MPI.COMM_WORLD
@@ -138,7 +144,7 @@ haloes.link_sibelius(compute_distance=True)
 hbt.gather_haloes()
 ```
 
-# read_hbt_subhalo_history.py
+# read_hbt_subhalo_history
 
 Simple python3 script to track subhaloes through time from the HBT+ output for SIBELIUS simulations.
 
@@ -148,7 +154,7 @@ Accepts a list of trackids and returns their HBT properties at each snapshot.
 
 ```python
 from mpi4py import MPI
-from read_hbt_subhalo_history import subhalo_history
+import sibelius.read_hbt_subhalo_history as subhalo_history
 
 # MPI communicator.
 comm = MPI.COMM_WORLD
