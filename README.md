@@ -50,10 +50,13 @@ galform = read_galform(data_dir, num_files)
 
 # Load galaxy data.
 what_to_load = ["SubhaloID", "xgal", "ygal", "zgal"]
-galaxies = galform.load_galaxies(what_to_load)
+galform.load_galaxies(what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
 galaxies.link_sibelius(compute_distance=True)
+
+# Access the data.
+print(galform.data["xgal"])
 ```
 
 ### Example usage (MPI case)
@@ -72,7 +75,7 @@ galform = read_galform(data_dir, num_files, comm=comm)
 
 # Load galaxy data.
 what_to_load = ["SubhaloID", "xgal", "ygal", "zgal"]
-galaxies = galform.load_galaxies(what_to_load)
+galform.load_galaxies(what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
 galaxies.link_sibelius(compute_distance=True)
@@ -113,7 +116,7 @@ hbt = HBT_dta(hbt_dir)
 # Load subhalo data.
 snapnum = 199 # z=0 for SIBELIUS simulations.
 what_to_load = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nbound']
-haloes = hbt.load_haloes(snapnum, what_to_load=what_to_load)
+hbt.load_haloes(snapnum, what_to_load=what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
 haloes.link_sibelius(compute_distance=True)
@@ -135,13 +138,16 @@ hbt = HBT_dta(hbt_dir, comm=comm)
 # Load subhalo data.
 snapnum = 199 # z=0 for SIBELIUS simulations.
 what_to_load = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nbound']
-haloes = hbt.load_haloes(snapnum, what_to_load=what_to_load)
+hbt.load_haloes(snapnum, what_to_load=what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
 haloes.link_sibelius(compute_distance=True)
 
 # Reduce all galaxies to rank 0.
 hbt.gather_haloes()
+
+# Access the data.
+print(hbt.data["Mbound"])
 ```
 
 # read_hbt_subhalo_history
