@@ -120,6 +120,9 @@ hbt.load_haloes(snapnum, what_to_load=what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
 haloes.link_sibelius(compute_distance=True)
+
+# Access the data.
+print(hbt.data["Mbound"])
 ```
 
 ### Example usage (MPI case)
@@ -145,9 +148,6 @@ haloes.link_sibelius(compute_distance=True)
 
 # Reduce all galaxies to rank 0.
 hbt.gather_haloes()
-
-# Access the data.
-print(hbt.data["Mbound"])
 ```
 
 # read_hbt_subhalo_history
