@@ -22,6 +22,7 @@ dict (galform.data in the examples below), see `sibelius_functions.py` for the o
 | ----- | ----------- | --------- | ------- | 
 | data_dir | path to GALFORM data (containing `ivol_XXX` directories) | No | - |
 | num_files | number of files GALFORM data is split over (number of `ivol_XXX` directories) | No | - |
+| output_no | output/snapshot number | No | - | 
 | comm= | MPI4PY communicator | Yes | None |
 | verbose= | True for more stdout output | Yes | False |
 
@@ -41,29 +42,30 @@ dict (galform.data in the examples below), see `sibelius_functions.py` for the o
 ### Example usage (No MPI case)
 
 ```python
-import sibelius.read_galform as read_galform
+import sibelius.galform as galform
 
 # Set up read_galform object.
 data_dir = "/path/to/galform/folder/"
 num_files = 1024
-galform = read_galform(data_dir, num_files)
+output_no = 1 # z=0
+g = galform.read_galform(data_dir, num_files, output_no)
 
 # Load galaxy data.
 what_to_load = ["SubhaloID", "xgal", "ygal", "zgal"]
-galform.load_galaxies(what_to_load)
+g.load_galaxies(what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
-galaxies.link_sibelius(compute_distance=True)
+g.link_sibelius(compute_distance=True)
 
 # Access the data.
-print(galform.data["xgal"])
+print(g.data["xgal"])
 ```
 
 ### Example usage (MPI case)
 
 ```python
 from mpi4py import MPI
-import sibelius.read_galform as read_galform
+import sibelius.galform as galform
 
 # MPI communicator.
 comm = MPI.COMM_WORLD
@@ -71,17 +73,21 @@ comm = MPI.COMM_WORLD
 # Set up read_galform object.
 data_dir = "/path/to/galform/folder/"
 num_files = 1024
-galform = read_galform(data_dir, num_files, comm=comm)
+output_no = 1 # z=0
+g = galform.read_galform(data_dir, num_files, output_no, comm=comm)
 
 # Load galaxy data.
 what_to_load = ["SubhaloID", "xgal", "ygal", "zgal"]
-galform.load_galaxies(what_to_load)
+g.load_galaxies(what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
-galaxies.link_sibelius(compute_distance=True)
+g.link_sibelius(compute_distance=True)
 
 # Reduce all galaxies to rank 0.
-galform.gather_galaxies()
+g.gather_galaxies()
+
+# Access the data.
+print(g.data["xgal"])
 ```
 
 # read_hbt_subhaloes
