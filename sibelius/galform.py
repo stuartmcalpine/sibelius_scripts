@@ -4,11 +4,12 @@ import os
 
 class read_galform:
 
-    def __init__(self, data_dir, num_files, comm=None, verbose=True):
+    def __init__(self, data_dir, num_files, output_no, comm=None, verbose=True):
 
         self.data_dir   = data_dir
         self.num_files  = num_files
         self.verbose    = verbose
+        self.output_no  = output_no
         self.mag_list   = ['2mass', 'sdss']
 
         # MPI stuff.
@@ -24,6 +25,18 @@ class read_galform:
 
         assert type(what_to_load) == list, "what_to_load not a list"
         self.data = {}
+
+        # Header.
+        if self.comm_rank == 0:
+            self.HEADER = {}
+            fname = f"{self.data_dir}/ivol_0/galaxies.hdf5"
+            f = h5py.File(fname, 'r')
+            assert f'Output{self.output_no:03d}' in f, 'Output does not exist'
+            self.HEADER['Redshift'] = float(f[f'Output{self.output_no:03d}/redshift'][...])
+            f.close()
+        else:
+            self.HEADER = None
+        if self.comm_size > 1: self.HEADER = self.comm.bcast(self.HEADER)
 
         # Loop over each file part.
         for i in range(self.num_files):
@@ -44,13 +57,14 @@ class read_galform:
             # Loop over each attribute we are loading.
             for att in what_to_load:
                 for F in f_list:
-                    if att in F['Output001']:
-                        assert len(F[f'Output001/{att}'].shape) == 1, "Bad shape"
+                    if att in F[f'Output{self.output_no:03d}']:
+                        assert len(F[f'Output{self.output_no:03d}/{att}'].shape) == 1, "Bad shape"
                         if att in self.data.keys():
                             self.data[att] =\
-                                np.concatenate((self.data[att],F[f'Output001/{att}'][...]))
+                                    np.concatenate((self.data[att],
+                                        F[f'Output{self.output_no:03d}/{att}'][...]))
                         else:
-                            self.data[att] = F[f'Output001/{att}'][...]
+                            self.data[att] = F[f'Output{self.output_no:03d}/{att}'][...]
 
             # Close files.
             for f in f_list:
@@ -101,6 +115,9 @@ class read_galform:
 
         from sibelius.sibelius_functions import compute_sibelius_properties
 
+        if int(self.output_no) != 1:
+            print("Warning: link_sibelius functions are assumed for the z=0 snapshot",
+                    f"this is the z={self.HEADER['Redshift']:.3f} snapshot")
         compute_sibelius_properties(self.data, 'galform', compute_distance, compute_ra_dec,
                 compute_velocity, compute_galactic, compute_apparent_mag,
                 compute_extra_coordinates, compute_extra_objects, use_centre)
