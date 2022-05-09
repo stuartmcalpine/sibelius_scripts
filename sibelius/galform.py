@@ -98,7 +98,8 @@ class read_galform:
         facs = {"M_SMBH": 1./h, "mstars_bulge": 1./h, "mstars_disk": 1./h, "mhhalo": 1./h,
                 "SubhaloID": None, "xgal": 1./h, "ygal": 1./h, "mhalo": 1./h,
                 "zgal": 1./h, "vxgal": None, "vygal": None, "vzgal": None,
-                "SubhaloSnapNum": None, "type": None}
+                "SubhaloSnapNum": None, "type": None, "mstardot": 1./h, "mstardot_average": 1./h,
+                "mstardot_burst": 1./h}
 
         for att in self.data.keys():
             if "mag_" in att:
