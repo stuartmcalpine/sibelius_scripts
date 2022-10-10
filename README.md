@@ -117,7 +117,7 @@ from sibelius.hbt import read_hbt_subhaloes
 
 # Set up HBT object.
 hbt_dir = "/path/to/parent/hbt/folder/"
-hbt = HBT_dta(hbt_dir)
+hbt = read_hbt_subhaloes(hbt_dir)
 
 # Load subhalo data.
 snapnum = 199 # z=0 for SIBELIUS simulations.
@@ -135,14 +135,14 @@ print(hbt.data["Mbound"])
 
 ```python
 from mpi4py import MPI
-import sibelius.read_hbt_subhaloes as HBT_data
+from sibelius.hbt import read_hbt_subhaloes
 
 # MPI communicator.
 comm = MPI.COMM_WORLD
 
 # Set up read_galform object.
 hbt_dir = "/path/to/parent/hbt/folder/"
-hbt = HBT_dta(hbt_dir, comm=comm)
+hbt = read_hbt_subhaloes(hbt_dir, comm=comm)
 
 # Load subhalo data.
 snapnum = 199 # z=0 for SIBELIUS simulations.
@@ -150,10 +150,39 @@ what_to_load = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nb
 hbt.load_haloes(snapnum, what_to_load=what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
-haloes.link_sibelius(compute_distance=True)
+hbt.link_sibelius(compute_distance=True)
 
 # Reduce all galaxies to rank 0.
 hbt.gather_haloes()
+
+# Access the data.
+print(hbt.data)
+```
+
+# read_subhalo_particles
+
+HBT stores the particle IDs bound to each subhalo.
+
+This example shows how to load the particle IDs for a given list of subhaloes
+(identified by their TrackId's).
+
+In MPI mode this function will still work, whatever TrackId's happen to be in
+the file subparts that rank reads will be stored in that rank.
+
+```python
+from sibelius.hbt import read_hbt_subhaloes
+
+# Set up HBT object.
+hbt_dir = "/path/to/parent/hbt/folder/"
+hbt = read_hbt_subhaloes(hbt_dir)
+
+# Load subhalo data.
+snapnum = 199 # z=0 for SIBELIUS simulations.
+trackid_list = [1,2,3]
+particle_ids_dict = hbt.load_subhalo_particles(snapnum, trackid_list)
+
+# Access the data.
+print(particle_ids_dict)
 ```
 
 # read_hbt_subhalo_history
