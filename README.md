@@ -8,15 +8,15 @@ Install `python3 setup.py install` or `python3 setup.py install --user`
 
 # link_sibelius
 
-Each catalog object returns a data array of subhalo/galaxy quantities (see examples below). This data array can be appended with Sibelius-specific computed properties (such as RA/DEC etc..). To do this, call the link_sibelius() function (see examples below).
+Each catalog object returns a data array of subhalo/galaxy quantities (see examples below). This data array can be appended with Sibelius-specific computed properties (such as RA/DEC etc..). To do this, call the link_sibelius() function after loading the raw data (see examples below).
 
 ### Input params to the link_sibelius function (all params are optional)
 
 | Input | Description |
 | ----- | ----------- |
-| compute_distance= | Compute distance from each galaxy to the MW |
+| compute_distance= | Compute distance from each galaxy to the observer |
 | compute_ra_dec= | Compute RA DEC of each galaxy |
-| compute_velocity= | Compute radial and tangential velocities of each galaxy relative to MW |
+| compute_velocity= | Compute radial and tangential velocities of each galaxy relative to observer |
 | compute_galactic= | Compute galactic coordinates to each galaxy |
 | compute_apparent_mag= | Compute apparent magnitudes of each galaxy based on absolute mag and distance |
 | observer= | Coordinate location of the observer. Default is the SIBELIUS-DARK MW subhalo. This can be overwritten with a 3d coordinate array. |
@@ -25,9 +25,9 @@ Each catalog object returns a data array of subhalo/galaxy quantities (see examp
 
 Simple python3 script to read GALFORM output for SIBELIUS simulations.
 
-Output data in the GALFORM directory is expected to be multiple `ivol_XXX` folders, or `ivol_XXX_mags` folders which contain the magnitudes.
+Output data in the GALFORM directory is expected to be multiple `ivol_XXX` folders and `ivol_XXX_mags` folders which contain the magnitudes.
 
-In the MPI reading case, each rank reads its own subset of the `ivol_XXX` file parts.
+In the MPI reading case, each rank reads its own subset of the `ivol_XXX` file parts. These arrays can then be reduced to rank=0 calling `gather_galaxies()`.
 
 ### Input params to read_galform
 
@@ -99,10 +99,6 @@ Simple python3 script to read HBT+ output for SIBELIUS simulations.
 `hbt_dir` is the parent directory, which contains subdirectories for each snapshot, in a format `XXX`, each of which contain the `SubSnap_XXX.xx.hdf5` files.
 
 In the MPI reading case, each rank reads its own subset of the `SubSnap_XXX.xx.hdf5` files.
-
-After loading the subhalo propeties, there is an additional option to compute SIBELIUS specific properties, such as RA, DEC, distance to the MW etc. 
-These are all based upon the MW (and other objects) positions from the SIBELIUS-DARK production run. This will add additional information to the original data
-dict (hbt.data in the examples below), see `sibelius_functions.py` for the output names within the dict (see table above for input options for this function).
 
 ### Input params to read_hbt_subhaloes.py
 
