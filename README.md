@@ -2,19 +2,32 @@
 
 Python3 scripts to read data from SIBELIUS simulations.
 
+Reads catalog information from HBT, Velociraptor and GALFORM outputs.
+
 Install `python3 setup.py install` or `python3 setup.py install --user`
+
+# link_sibelius
+
+Each catalog object returns a data array of subhalo/galaxy quantities (see examples below). This data array can be appended with Sibelius-specific computed properties (such as RA/DEC etc..). To do this, call the link_sibelius() function (see examples below).
+
+### Input params to the link_sibelius function (all params are optional)
+
+| Input | Description |
+| ----- | ----------- |
+| compute_distance= | Compute distance from each galaxy to the MW |
+| compute_ra_dec= | Compute RA DEC of each galaxy |
+| compute_velocity= | Compute radial and tangential velocities of each galaxy relative to MW |
+| compute_galactic= | Compute galactic coordinates to each galaxy |
+| compute_apparent_mag= | Compute apparent magnitudes of each galaxy based on absolute mag and distance |
+| observer= | Coordinate location of the observer. Default is the SIBELIUS-DARK MW subhalo. This can be overwritten with a 3d coordinate array. |
 
 # read_galform
 
 Simple python3 script to read GALFORM output for SIBELIUS simulations.
 
-Output data in the GALFORM directory is expected to be multiple `ivol_XXX` folders with additionally `ivol_XXX_mags` folders containing the magnitudes.
+Output data in the GALFORM directory is expected to be multiple `ivol_XXX` folders, or `ivol_XXX_mags` folders which contain the magnitudes.
 
-In the MPI reading case, each rank reads its own subset of the `ivol_XXX` files.
-
-After loading the galaxy propeties, there is an additional option to compute SIBELIUS specific properties, such as RA, DEC, distance to the MW etc. 
-These are all based upon the MW (and other objects) positions from the SIBELIUS-DARK production run (though using `use_centre=True` sets the position of the observer to the centre of the box). This will add additional information to the original data
-dict (galform.data in the examples below), see `sibelius_functions.py` for the output names within the dict.
+In the MPI reading case, each rank reads its own subset of the `ivol_XXX` file parts.
 
 ### Input params to read_galform
 
@@ -25,19 +38,8 @@ dict (galform.data in the examples below), see `sibelius_functions.py` for the o
 | output_no | output/snapshot number | No | - | 
 | comm= | MPI4PY communicator | Yes | None |
 | verbose= | True for more stdout output | Yes | False |
-
-### Input params to the link_sibelius function (all params are optional and expect True or False, and all default to False)
-
-| Input | Description |
-| ----- | ----------- | 
-| compute_distance= | Compute distance from each galaxy to the MW |
-| compute_ra_dec= | Compute RA DEC of each galaxy |
-| compute_velocity= | Compute radial and tangential velocities of each galaxy relative to MW |
-| compute_galactic= | Compute galactic coordinates to each galaxy |
-| compute_apparent_mag= | Compute apparent magnitudes of each galaxy based on absolute mag and distance |
-| compute_extra_coordinates= | Simulation x and z axis are flipped. This returns `coords_eq` which is in true equitorial coordinates |
-| compute_extra_objects= | Repeats all the computations above, but now also for M31, Coma and Virgo |
-| use_centre= | True to use centre of the box xyz=[500,500,500] Mpc  v=[0,0,0] kms/ as the "observer" rather than the position of the SIBELIUS-DARK MW subhalo. Note the properties will still be named `X_mw` in the data dict. |
+| only_single_ivol= | Option to read single ivol file | Yes | None |
+| to_convert_out_h= | True to convert out h-values | Yes | True |
 
 ### Example usage (No MPI case)
 
