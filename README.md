@@ -113,7 +113,7 @@ dict (hbt.data in the examples below), see `sibelius_functions.py` for the outpu
 ### Example usage (No MPI case)
 
 ```python
-import sibelius.read_hbt_subhaloes as HBT_data
+from sibelius.hbt import read_hbt_subhaloes
 
 # Set up HBT object.
 hbt_dir = "/path/to/parent/hbt/folder/"
@@ -125,7 +125,7 @@ what_to_load = ['ComovingMostBoundPosition', 'Mbound', 'HostHaloId', 'Rank', 'Nb
 hbt.load_haloes(snapnum, what_to_load=what_to_load)
 
 # Link SIBELIUS specific properties (compute the distance to each object from the Milky Way).
-haloes.link_sibelius(compute_distance=True)
+hbt.link_sibelius(compute_distance=True)
 
 # Access the data.
 print(hbt.data["Mbound"])
