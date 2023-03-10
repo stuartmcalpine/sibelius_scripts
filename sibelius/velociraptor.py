@@ -30,6 +30,7 @@ class read_velociraptor:
 
         self.file_part = file_part
         self.verbose = verbose
+        self.num_galaxies = 0
 
         # Load header information.
         self.load_info()
@@ -77,6 +78,8 @@ class read_velociraptor:
             stores the galaxy data in a dict named "data"
         """
 
+        assert len(what_to_load) > 0
+
         # Dict to store the data.
         self.data = {}
 
@@ -97,6 +100,7 @@ class read_velociraptor:
             if self.verbose:
                 print(f"loaded {len(self.data[att])} galaxies.")
 
+        self.num_galaxies = len(self.data[att])
         f.close()
 
     def link_sibelius(
@@ -106,46 +110,21 @@ class read_velociraptor:
         compute_velocity=False,
         compute_galactic=False,
         compute_apparent_mag=False,
-        compute_extra_coordinates=False,
-        compute_extra_objects=False,
-        use_centre=False,
+        observer="sibelius_dark_mw",
     ):
         """
-        Compute some extra properties of the galaxies specific to Sibelius.
-
-        Parameters
-        ----------
-        compute_distance : bool (optional)
-            compute the Euclidian physical distance from observer to each galaxy
-        compute_ra_dec : bool (optional)
-            compute the RA and DEC of each galaxy
-        compute_velocity : bool (optional)
-
-        compute_galactic : bool (optional)
-
-        compute_apparent_mag : bool (optional)
-
-        compute_extra_coordinates : bool (optional)
-
-        compute_extra_objects : bool (optional)
-
-        use_centre : bool (optional)
-
-        Returns
-        -------
-        None
-            The self.data dict is updated directly with the new properties
+        Compute some properties of the galaxies specific to Sibelius.
+        
+        See sibelius_functions.py for options.
         """
-
-        compute_sibelius_properties(
-            self.data,
-            "velociraptor",
-            compute_distance,
-            compute_ra_dec,
-            compute_velocity,
-            compute_galactic,
-            compute_apparent_mag,
-            compute_extra_coordinates,
-            compute_extra_objects,
-            use_centre,
-        )
+        if self.num_galaxies > 0:
+            compute_sibelius_properties(
+                self.data,
+                "velociraptor",
+                compute_distance,
+                compute_ra_dec,
+                compute_velocity,
+                compute_galactic,
+                compute_apparent_mag,
+                observer,
+            )

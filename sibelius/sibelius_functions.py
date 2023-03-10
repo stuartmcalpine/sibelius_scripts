@@ -259,10 +259,14 @@ def compute_sibelius_properties(
     c, v = _refactor_catalog_data(data, catalog_type)
 
     # What is the position of the observer.
-    if observer == "sibelius_dark_mw":
-        obs_coords = np.array([499.34264252, 504.50740204, 497.31107545])
-        obs_vel = np.array([-12.43349451, 350.16214811, -152.84008118])
+    if type(observer) == str:
+        if observer == "sibelius_dark_mw":
+            obs_coords = np.array([499.34264252, 504.50740204, 497.31107545])
+            obs_vel = np.array([-12.43349451, 350.16214811, -152.84008118])
+        else:
+            raise ValueError
     else:
+        assert type(observer) == np.ndarray
         assert len(observer) == 3, "Bad observer loc"
         obs_coords = observer
         obs_vel = None
